@@ -1,0 +1,10 @@
+If false Then 
+                                                                                                                                                                          /*{
+ "type": "RegExpLiteral",
+ "extra": {
+  "raw": "/42/"
+ },
+ "pattern": "42",
+ "flags": ""
+}*/
+                                                                                                                                                                        End If

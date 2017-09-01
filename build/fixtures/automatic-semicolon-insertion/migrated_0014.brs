@@ -1,0 +1,4 @@
+PRINT error
+                                                                                                                                                                    STOP
+                                                                                                                                                                    
+                                                                                                                                                                    error

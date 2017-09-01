@@ -1,0 +1,5 @@
+PRINT {
+                                                                                                                                                                          message : "Error"
+                                                                                                                                                                        }
+                                                                                                                                                                        STOP
+                                                                                                                                                                        
