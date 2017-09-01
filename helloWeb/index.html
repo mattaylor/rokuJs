@@ -1,0 +1,45 @@
+<html>
+<script src="https://unpkg.com/moonjs@0.11.0/dist/moon.min.js"></script>
+<script src="../sceneGraph.js"></script>
+<script src="../rokuUtils.js"></script>
+<script src="https://unpkg.com/moon-router"></script>
+<style>
+	.widget { border-style: solid; background: lightgray; margin-top: 5px; border-color: black; border-width: 1px; border-radius: 2px; padding: 2px }
+	.header { background: pink; font-weight: bold; padding: 2px; margin-top:0px; margin-bottom:5px } 
+</style>		
+<div id="app">
+	<title>{{title}}</title>
+	<Widget title="myWidget1">yo ho yo<p> once up on a time </p></Widget>
+	<Label id="myLabel" 
+		text="Hello World!"
+		width="1280" 
+		height="720" 
+		horizAlign="center"
+		vertAlign="center"
+	/>
+	
+	<script type="text/javascript" >
+	 
+  	function init() { 
+		m.top.setFocus(true)
+		m.myLabel = m.top.findNode("myLabel")
+		
+		//Set the font size
+		m.myLabel.font.size=92
+		
+		//Set the color to light blue
+		m.myLabel.color="0x72D7EEFF"
+	}
+	</script>
+	<!-- End of Javascript Portion -->
+</div>
+<script>
+	Moon.use(SceneGraph)
+	Moon.component('widget', {
+		props: ['title'],
+		template:`<div class="widget"><div class="header widget">{{title}}</div>this is body: <slot></slot></div>`
+	})
+	console.log(Moon)
+	new Moon({ el: "#app",	data: { title: "Moon Shot!" } })
+</script>
+</html>
