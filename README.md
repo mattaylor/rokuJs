@@ -5,7 +5,7 @@
 ## Usage 
 
 `$ npm install -g git@gitlab.eng.roku.com:mtaylor/rokujs.git
-`js2bs [options] <file>`
+`$ js2bs -o <outDir> -i <inpDir> <file|direcory>`
 
 
 ## Components
