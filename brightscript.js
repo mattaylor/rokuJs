@@ -4,89 +4,90 @@ var acorn = require('acorn')
 const babyl = require('babylon')
 const babel = require('babel-core')
 
-var tab = '  '
-var eol = '\n'
+var tab = '   '
+var eol = '\n '
 var esc = (str) => str.replace(/[\"\']/, '\\\"')
 var log = (node) => JSON.stringify(node, ((k, v) => ['start', 'end', 'loc'].includes(k) ? undefined : v), ' ')
 var ops = (op) => ({ '||' : 'OR', '&&': 'AND' , '!': 'NOT ', '==': '=', '===': '=' }[op] || op)
 var inc = () => eol += tab
 var dec = () => eol = eol.length > tab.length ? eol.slice(0, -tab.length) : eol
 
-var astNode = { 
+var proc = { 
 	
-	File: (n) => codify(n.program),
+	File: (n) => code(n.program),
 
-	Program: (n) => n.body.map(codify).join(eol),
+	Program: (n) => n.body.map(code).join(eol),
 	
-	ExpressionStatement : (n) => codify(n.expression) + (n.expression.trailingComments||[]).join(eol+'REM '),
+	ExpressionStatement : (n) => code(n.expression) + (n.expression.trailingComments||[]).join(eol+'REM '),
 	
-	FunctionDeclaration: (n) => `Sub ${n.id.name} (${n.params.map(codify).join(', ')})${indent(n.body)}End Sub${eol}`,
+	FunctionDeclaration: (n) => `Sub ${n.id.name} (${n.params.map(code).join(', ')})${bloc(n.body)}End Sub${eol}`,
 
 	//ObjectMethod: (n) => `Sub ${n.id.name} (${n.params.map(codify).join(', ')})${indent(n.body)}End Sub${eol}`,
 	
-	BlockStatement: (n) => n.body.map(codify).join(eol),
+	BlockStatement: (n) => n.body.map(code).join(eol),
 
 	Identifier: (n) => n.name,
 
-	SwitchStatement: (n) => n.cases.map(kase => 
-		`if ${codify(n.discriminant)} = ${codify(kase.test)} Then `+inc()+kase.consequent.map(codify).join(eol))+dec()+'End If',
-	
-	ThrowStatement: (n) => `PRINT ${codify(n.argument)}${eol}STOP${eol}`,
+	SwitchStatement: (n) => n.cases.map(kase => `if ${code(n.discriminant)} = ${code(kase.test)} Then ${list(kase.consequent,'')} End If`),
+		
+	ThrowStatement: (n) => `PRINT ${code(n.argument)+eol}STOP${eol}`,
 
-	CallExpression: (n) => codify(n.callee)+'('+(n.arguments.map(codify).join(', '))+')',
+	CallExpression: (n) => code(n.callee)+'('+(n.arguments.map(code).join(', '))+')',
 
-	LabeledStatement: (n) => eol+codify(n.label)+':'+eol+codify(n.body),
+	LabeledStatement: (n) => eol+code(n.label)+':'+eol+code(n.body),
 	
-	MemberExpression: (n) => codify(n.object)+'.'+codify(n.property),
+	MemberExpression: (n) => code(n.object)+'.'+code(n.property),
 	
 	BreakStatement: (n) => '',
 	
 	ContinueStatement:(n) => eol+'GOTO '+(n.label ? n.label.name : '')+eol,
 
-	UpdateExpression: (n) => n.prefix ? ops(n.operator)+codify(n.argument) : codify(n.argument)+ops(n.operator),
+	UpdateExpression: (n) => n.prefix ? ops(n.operator)+code(n.argument) : code(n.argument)+ops(n.operator),
 
-	ObjectExpression: (n) => '{'+ inc() + n.properties.map(codify).join(','+eol)+ dec()+'}',
+	//ObjectExpression: (n) => `{${inc()+ n.properties.map(code).join(','+eol)+ dec()}}`,
+	ObjectExpression: (n) => `{${list(n.properties)}}`,
 	
-	ArrayExpression: (n) => '['+ inc() + n.elements.map(codify).join(','+eol)+ dec()+']',
+	//ArrayExpression: (n) =>  `[${inc()+ n.elements.map(code).join(','+eol)+ dec()}]`,
+	ArrayExpression: (n) =>  `[${list(n.elements)}]`,
 	
-	ObjectProperty: (n) => codify(n.key)+' : '+codify(n.value),
+	ObjectProperty: (n) => code(n.key)+' : '+code(n.value),
 	
-	Property: (n) => codify(n.key)+' : '+codify(n.value),
+	Property: (n) => code(n.key)+' : '+code(n.value),
 	
 	ForStatement: (n) => 
-		`For ${codify(n.init)} To `+ (n.test ? codify(n.test.right) : '')
+		`For ${code(n.init)} To `+ (n.test ? code(n.test.right) : '')
 		+ (n.update ? ' Step '+ {'++':1, '--':-1}[n.update.operator] : '')
-		+ indent(n.body)+'End For',
+		+ bloc(n.body)+'End For',
 	
-	ReturnStatement: (n) => 'Return '+codify(n.argument),
+	ReturnStatement: (n) => 'Return '+code(n.argument),
 	
-	ConditionalExpression: (n) => `IF ${codify(n.test)} THEN ${codify(n.test.left)} = ${codify(n.consequent)} ELSE ${codify(n.test.left)} = ${codify(n.alternate)})`,
+	ConditionalExpression: (n) => `IF ${code(n.test)} THEN ${code(n.test.left)} = ${code(n.consequent)} ELSE ${code(n.test.left)} = ${code(n.alternate)})`,
 	
-	UnaryExpression: (n) => n.prefix ? ops(n.operator)+codify(n.argument) : codify(n.argument)+ops(n.operator),
+	UnaryExpression: (n) => n.prefix ? ops(n.operator)+ ' '+code(n.argument) : code(n.argument)+' '+ops(n.operator),
 	
-	BinaryExpression: (n) => codify(n.left) +' '+n.operator+' '+codify(n.right),
+	BinaryExpression: (n) => code(n.left) +' '+n.operator+' '+code(n.right),
 	
-	AssignmentExpression: (n) => codify(n.left) +' '+n.operator+' '+codify(n.right),
+	AssignmentExpression: (n) => code(n.left) +' '+n.operator+' '+code(n.right),
 	
-	LogicalExpression: (n) => codify(n.left) +' '+ops(n.operator)+' '+codify(n.right), 
+	LogicalExpression: (n) => code(n.left) +' '+ops(n.operator)+' '+code(n.right), 
 
-	TryStatement: (n) => `If ${n.handler.param.name} = Eval("${esc(codify(n.block))}") Then ${indent(n.handler.body)}End If`,
+	TryStatement: (n) => `If ${n.handler.param.name} = Eval("${esc(code(n.block))}") Then ${bloc(n.handler.body)}End If`,
 	
-	FunctionExpression: (n) => 'Function ('+n.params.map(codify).join(', ')+')'+indent(n.body)+'End Function',
+	FunctionExpression: (n) => 'Function ('+n.params.map(code).join(', ')+')'+bloc(n.body)+'End Function',
 	
-	ObjectMethod: (n) => 'Function('+n.params.map(codify).join(', ')+')'+indent(n.body)+'End Function',
+	ObjectMethod: (n) => 'Function('+n.params.map(code).join(', ')+')'+bloc(n.body)+'End Function',
 	
-	VariableDeclaration: (n) => n.declarations.map(codify).join(eol), 
+	VariableDeclaration: (n) => n.declarations.map(code).join(eol), 
 	
-	VariableDeclarator: (n) => n.id.name +' = '+ codify(n.init),
+	VariableDeclarator: (n) => n.id.name +' = '+ code(n.init),
 
-	SequenceExpression: (n) => n.expressions.map(codify).join(', '),
+	SequenceExpression: (n) => n.expressions.map(code).join(', '),
 
 	EmptyStatement: (n) => '',
 
-	WhileStatement: (n) => `While ${codify(n.test)+indent(n.body)}End While`,
+	WhileStatement: (n) => `While ${code(n.test)+bloc(n.body)}End While`,
 
-	DoWhileStatement: (n) => codify(n.body)+eol+`While ${codify(n.test)+indent(n.body)}End While`,
+	DoWhileStatement: (n) => code(n.body)+eol+`While ${code(n.test)+bloc(n.body)}End While`,
 	
 	Literal: (n) => typeof n.value === 'String' ? esc(n.value.replace("'", '"')) : n.value,
 
@@ -98,21 +99,22 @@ var astNode = {
 	
 	BooleanLiteral: (n) => n.value,
 	
-	MemberExpession : (n) => `${codify(n.object)}.${codify(n.property)}`,
+	MemberExpession : (n) => `${code(n.object)}.${code(n.property)}`,
 
-	ForInStatement: (n) => `For Each ${codify(n.left)} In ${codify(n.right)} ${indent(n.body)}End For`,
+	ForInStatement: (n) => `For Each ${code(n.left)} In ${code(n.right)} ${bloc(n.body)}End For`,
 	
-	IfStatement: (n) => `If ${codify(n.test)} Then ${indent(n.consequent) + indent(n.alternate, 'Else')}End If`
+	IfStatement: (n) => `If ${code(n.test)} Then ${bloc(n.consequent) + bloc(n.alternate, 'Else')}End If`
 }
 
-var codify = (node) => node && astNode[node.type] ? astNode[node.type](node) : `/*${log(node)}*/`// ${astring.generate(node)}`
-var indent = (node, pref='') => node ? (pref + inc() + codify(node) + dec()) : ''
+var code = (node) => node && proc[node.type] ? proc[node.type](node) : `/*${log(node)}*/`// ${astring.generate(node)}`
+var bloc = (node, pref='') => node ? pref + inc() + code(node) + dec() : ''
+var list = (node, pref=',') => node ? inc() + node.map(code).join(pref+eol) + dec() : ''
 
 module.exports = {
 	//parse: (js) => babyl.parse(babel.transform(js, { presets: ["es2015"]}).code, { sourceType: 'script', plugins: ['estree']} ),
 	parse: (js) => babel.transform(js, { presets: ["es2015"]}).ast,
 	//build: (js) => astring.generate(module.exports.parse(js), { generator : Object.assign({}, astring.baseGenerator, brightGen) }) 
-	build: (js) => codify(module.exports.parse(js))
+	build: (js) => code(module.exports.parse(js))
 }
 
 

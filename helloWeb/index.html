@@ -17,7 +17,7 @@
 		horizAlign="center"
 		vertAlign="center"
 	/>
-	
+
 	<script type="text/javascript" >
 	 
   	function init() { 
@@ -35,9 +35,10 @@
 </div>
 <script>
 	Moon.use(SceneGraph)
-	Moon.component('widget', {
-		props: ['title'],
+	Moon.component('include', {
+		props: ['url'],
 		template:`<div class="widget"><div class="header widget">{{title}}</div>this is body: <slot></slot></div>`
+		
 	})
 	console.log(Moon)
 	new Moon({ el: "#app",	data: { title: "Moon Shot!" } })
