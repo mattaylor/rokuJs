@@ -1,3 +1,8 @@
+
+// @jsx createElement
+// import { createElement } from 'nervjs'
+
+export default 
 <component name="HelloWorld" extends="Scene"> 
 	<children>
     <Label id="myLabel" 

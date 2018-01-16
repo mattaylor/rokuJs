@@ -1,4 +1,7 @@
 // Animation
+// @jsx createElement
+import { createElement } from 'nervjs'
+
 export const Vector2DFieldInterpolator = (props) => (
   <div class='Vector2DFieldInterpolator'>
     Vector2DFieldInterpolator: {props}

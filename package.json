@@ -24,6 +24,8 @@
     "babel-preset-es2015": "^6.24.1",
     "babylon": "^6.18.0",
     "commander": "^2.11.0",
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^0.5.1",
+    "nerv-redux": "^1.2.4",
+    "nervjs": "^1.2.4"
   }
 }

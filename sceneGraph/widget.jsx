@@ -1,4 +1,7 @@
 // Widget
+// @jsx createElement
+import { createElement } from 'nervjs'
+
 export const Button = (props) => (
   <div class='Button'>
     Button: {props}
