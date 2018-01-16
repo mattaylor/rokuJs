@@ -1,3 +1,0 @@
-foo(Function ()
-  
-End Function)

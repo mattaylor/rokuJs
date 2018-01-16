@@ -1,5 +1,0 @@
-PRINT {
-                                                                                                                                                                          message : "Error"
-                                                                                                                                                                        }
-                                                                                                                                                                        STOP
-                                                                                                                                                                        

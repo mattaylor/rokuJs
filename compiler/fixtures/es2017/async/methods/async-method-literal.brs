@@ -1,5 +1,0 @@
-{
-                                                                                                                                                                      "xyz" : Function ()
-                                                                                                                                                                        
-                                                                                                                                                                      End Function
-                                                                                                                                                                    }

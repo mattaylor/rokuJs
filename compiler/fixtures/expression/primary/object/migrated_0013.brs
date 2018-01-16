@@ -1,5 +1,0 @@
-x = {
-                                                                                                                                                                          Function()
-                                                                                                                                                                            
-                                                                                                                                                                          End Function
-                                                                                                                                                                        }

@@ -1,3 +1,0 @@
-a = Function ()
-                                                                                                                                                                      
-                                                                                                                                                                    End Function

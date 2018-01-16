@@ -2,6 +2,7 @@
 // @jsx createElement
 import { createElement } from 'nervjs'
 import { Component, Chldren } from '../../../sceneGraph/primary'
+import { Label } from '../../../sceneGraph/renderable'
 import { m } from '../../sceneGraph/globals'
 
 export default (props) => 

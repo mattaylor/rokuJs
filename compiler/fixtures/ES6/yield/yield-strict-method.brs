@@ -1,5 +1,0 @@
-{
-                                                                                                                                                          yield : Function ()
-                                                                                                                                                            
-                                                                                                                                                          End Function
-                                                                                                                                                        }
