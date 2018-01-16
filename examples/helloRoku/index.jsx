@@ -1,20 +1,23 @@
-import { render, Component } from 'nervjs'
+import { render } from 'nervjs'
 
 import Hello from './comps/helloworld'
+
+/*
 
 const styles = {
   fontFamily: 'sans-serif',
   textAlign: 'center'
 }
 
-class App extends Component {
+class App extends ReactComp {
   render () {
     return (
       <div style={styles}>
-        {Hello}
+        <Hello/>
       </div>
     )
   }
 }
+*/
 
-render(<App />, document.getElementById('root'))
+render(<Hello />, document.getElementById('root'))

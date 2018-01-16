@@ -1,10 +1,12 @@
 
 // @jsx createElement
-// import { createElement } from 'nervjs'
+import { createElement } from 'nervjs'
+import { Component, Chldren } from '../../../sceneGraph/primary'
+import { m } from '../../sceneGraph/globals'
 
-export default 
-<component name="HelloWorld" extends="Scene"> 
-	<children>
+export default (props) => 
+<Component name="HelloWorld" extends="Scene"> 
+	<Children>
     <Label id="myLabel" 
       text="Hello World!"
       width="1280" 
@@ -12,7 +14,7 @@ export default
       horizAlign="center"
       vertAlign="center"
     />
-  </children>
+  </Children>
   { m.top.setFocus(true)
     m.myLabel = m.top.findNode("myLabel")
  
@@ -22,4 +24,4 @@ export default
     'Set the color to light blue
     m.myLabel.color="0x72D7EEFF"
   }
-</component>
+</Component>
