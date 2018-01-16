@@ -1,0 +1,3 @@
+PRINT x * y
+                                                                                                                                                                        STOP
+                                                                                                                                                                        

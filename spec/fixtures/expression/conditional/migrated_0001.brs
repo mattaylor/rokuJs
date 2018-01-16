@@ -1,0 +1,1 @@
+IF x AND y THEN x = 1 ELSE x = 2)

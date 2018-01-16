@@ -1,0 +1,3 @@
+foo(Function ()
+  
+End Function)

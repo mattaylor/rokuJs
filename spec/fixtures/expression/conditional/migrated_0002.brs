@@ -1,0 +1,1 @@
+x = IF 0 THEN /*undefined*/ = 1 ELSE /*undefined*/ = 2)
